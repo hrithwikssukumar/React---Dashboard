@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import 
 { BsFillArchiveFill, BsFillGrid3X3GapFill, BsPeopleFill, BsFillBellFill}
  from 'react-icons/bs'
@@ -7,6 +7,16 @@ import
  from 'recharts';
 
 function Home() {
+  const [machinedata,setMachineData] = useState([]);
+
+  useEffect(()=>{
+    fetch('http://44.201.110.247:8000/api/get-shift-data/?shift=1&machine=1&date=2025-04-03')
+    .then(response => response.json())
+    .then(machinedata => setMachineData(machinedata))
+
+  },[])
+
+
 
     const data = [
         {
@@ -63,33 +73,36 @@ function Home() {
         <div className='main-cards'>
             <div className='card'>
                 <div className='card-inner'>
-                    <h3>PRODUCTS</h3>
+                    <h3>Running Hours</h3>
                     <BsFillArchiveFill className='card_icon'/>
                 </div>
-                <h1>300</h1>
+                {<h1>300</h1>}
             </div>
             <div className='card'>
                 <div className='card-inner'>
-                    <h3>CATEGORIES</h3>
+                    <h3>Good Products</h3>
                     <BsFillGrid3X3GapFill className='card_icon'/>
                 </div>
                 <h1>12</h1>
             </div>
             <div className='card'>
                 <div className='card-inner'>
-                    <h3>CUSTOMERS</h3>
+                    <h3>Bad Products</h3>
                     <BsPeopleFill className='card_icon'/>
                 </div>
                 <h1>33</h1>
             </div>
             <div className='card'>
                 <div className='card-inner'>
-                    <h3>ALERTS</h3>
+                    <h3>Total Products</h3>
                     <BsFillBellFill className='card_icon'/>
                 </div>
                 <h1>42</h1>
             </div>
         </div>
+
+
+
 
         <div className='charts'>
             <ResponsiveContainer width="100%" height="100%">
