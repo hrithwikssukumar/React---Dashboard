@@ -1,157 +1,149 @@
-import React, { useEffect, useState } from 'react'
-import 
-{ BsFillArchiveFill, BsFillGrid3X3GapFill, BsPeopleFill, BsFillBellFill}
- from 'react-icons/bs'
- import 
- { BarChart, Bar, Cell, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, LineChart, Line } 
- from 'recharts';
+import React, { useEffect, useState } from "react";
+import {
+  BsFillArchiveFill,
+  BsFillGrid3X3GapFill,
+  BsPeopleFill,
+  BsFillBellFill,
+} from "react-icons/bs";
+import {
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  Legend,
+  ResponsiveContainer,
+  LineChart,
+  Line,
+} from "recharts";
 
 function Home() {
-  const [machinedata,setMachineData] = useState([]);
+  // State to store machine data
+  const [machineData, setMachineData] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
-  useEffect(()=>{
-    fetch('http://44.201.110.247:8000/api/get-shift-data/?shift=1&machine=1&date=2025-04-03')
-    .then(response => response.json())
-    .then(machinedata => setMachineData(machinedata))
+  // Fetch machine data on component mount
+  useEffect(() => {
+    fetch(
+      "http://44.201.110.247:8000/api/get-shift-data/?shift=1&machine=1&date=2025-03-28"
+    )
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error("Failed to fetch data");
+        }
+        return response.json();
+      })
+      .then((json) => {
+        setMachineData(json);
+        setLoading(false);
+      })
+      .catch((error) => {
+        console.error("Error fetching data:", error);
+        setError(error.message);
+        setLoading(false);
+      });
+  }, []);
 
-  },[])
-
-
-
-    const data = [
-        {
-          name: 'Page A',
-          uv: 4000,
-          pv: 2400,
-          amt: 2400,
-        },
-        {
-          name: 'Page B',
-          uv: 3000,
-          pv: 1398,
-          amt: 2210,
-        },
-        {
-          name: 'Page C',
-          uv: 2000,
-          pv: 9800,
-          amt: 2290,
-        },
-        {
-          name: 'Page D',
-          uv: 2780,
-          pv: 3908,
-          amt: 2000,
-        },
-        {
-          name: 'Page E',
-          uv: 1890,
-          pv: 4800,
-          amt: 2181,
-        },
-        {
-          name: 'Page F',
-          uv: 2390,
-          pv: 3800,
-          amt: 2500,
-        },
-        {
-          name: 'Page G',
-          uv: 3490,
-          pv: 4300,
-          amt: 2100,
-        },
-      ];
-     
+  // Dummy chart data (Replace this with API data later)
+  const chartData = [
+    { name: "Shift 1", good: 1808, bad: 0, total: 1808 },
+    { name: "Shift 2", good: 1809, bad: 1, total: 1810 },
+    { name: "Shift 3", good: 1808, bad: 2, total: 1810 },
+  ];
 
   return (
-    <main className='main-container'>
-        <div className='main-title'>
-            <h3>DASHBOARD</h3>
-        </div>
+    <main className="main-container">
+      <div className="main-title">
+        <h3>DASHBOARD</h3>
+      </div>
 
-        <div className='main-cards'>
-            <div className='card'>
-                <div className='card-inner'>
-                    <h3>Running Hours</h3>
-                    <BsFillArchiveFill className='card_icon'/>
-                </div>
-                {<h1>300</h1>}
+      {/* If API is still loading, show a loading message */}
+      {loading ? (
+        <h2>Loading data...</h2>
+      ) : error ? (
+        <h2 style={{ color: "red" }}>Error: {error}</h2>
+      ) : (
+        <>
+          <div className="main-cards">
+            {/* Running Hours */}
+            <div className="card">
+              <div className="card-inner">
+                <h3>Running Hours</h3>
+                <BsFillArchiveFill className="card_icon" />
+              </div>
+              <h1>{machineData?.machine_running_hours || "N/A"}</h1>
             </div>
-            <div className='card'>
-                <div className='card-inner'>
-                    <h3>Good Products</h3>
-                    <BsFillGrid3X3GapFill className='card_icon'/>
-                </div>
-                <h1>12</h1>
+
+            {/* Good Products */}
+            <div className="card">
+              <div className="card-inner">
+                <h3>Good Products</h3>
+                <BsFillGrid3X3GapFill className="card_icon" />
+              </div>
+              <h1>{machineData?.good_products || 0}</h1>
             </div>
-            <div className='card'>
-                <div className='card-inner'>
-                    <h3>Bad Products</h3>
-                    <BsPeopleFill className='card_icon'/>
-                </div>
-                <h1>33</h1>
+
+            {/* Bad Products */}
+            <div className="card">
+              <div className="card-inner">
+                <h3>Bad Products</h3>
+                <BsPeopleFill className="card_icon" />
+              </div>
+              <h1>{machineData?.bad_products || 0}</h1>
             </div>
-            <div className='card'>
-                <div className='card-inner'>
-                    <h3>Total Products</h3>
-                    <BsFillBellFill className='card_icon'/>
-                </div>
-                <h1>42</h1>
+
+            {/* Total Products */}
+            <div className="card">
+              <div className="card-inner">
+                <h3>Total Products</h3>
+                <BsFillBellFill className="card_icon" />
+              </div>
+              <h1>{machineData?.total_count || 0}</h1>
             </div>
-        </div>
+          </div>
 
-
-
-
-        <div className='charts'>
-            <ResponsiveContainer width="100%" height="100%">
-            <BarChart
-            width={500}
-            height={300}
-            data={data}
-            margin={{
-                top: 5,
-                right: 30,
-                left: 20,
-                bottom: 5,
-            }}
-            >
+          {/* Charts */}
+          <div className="charts">
+            {/* Bar Chart */}
+            <ResponsiveContainer width="100%" height={300}>
+              <BarChart
+                data={chartData}
+                margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
+              >
                 <CartesianGrid strokeDasharray="3 3" />
                 <XAxis dataKey="name" />
                 <YAxis />
                 <Tooltip />
                 <Legend />
-                <Bar dataKey="pv" fill="#8884d8" />
-                <Bar dataKey="uv" fill="#82ca9d" />
-                </BarChart>
+                <Bar dataKey="good" fill="#82ca9d" name="Good Products" />
+                <Bar dataKey="bad" fill="#ff4d4d" name="Bad Products" />
+                <Bar dataKey="total" fill="#8884d8" name="Total Products" />
+              </BarChart>
             </ResponsiveContainer>
 
-            <ResponsiveContainer width="100%" height="100%">
-                <LineChart
-                width={500}
-                height={300}
-                data={data}
-                margin={{
-                    top: 5,
-                    right: 30,
-                    left: 20,
-                    bottom: 5,
-                }}
-                >
+            {/* Line Chart */}
+            <ResponsiveContainer width="100%" height={300}>
+              <LineChart
+                data={chartData}
+                margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
+              >
                 <CartesianGrid strokeDasharray="3 3" />
                 <XAxis dataKey="name" />
                 <YAxis />
                 <Tooltip />
                 <Legend />
-                <Line type="monotone" dataKey="pv" stroke="#8884d8" activeDot={{ r: 8 }} />
-                <Line type="monotone" dataKey="uv" stroke="#82ca9d" />
-                </LineChart>
+                <Line type="monotone" dataKey="good" stroke="#82ca9d" />
+                <Line type="monotone" dataKey="bad" stroke="#ff4d4d" />
+                <Line type="monotone" dataKey="total" stroke="#8884d8" />
+              </LineChart>
             </ResponsiveContainer>
-
-        </div>
+          </div>
+        </>
+      )}
     </main>
-  )
+  );
 }
 
-export default Home
+export default Home;
